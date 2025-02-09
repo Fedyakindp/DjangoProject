@@ -1,0 +1,21 @@
+{% extends parent_template|default:"base.html" %}
+
+{% block content %}
+<!-- Выводим вакансии в цикле -->
+{% if vacancies %}
+<ul>
+    {% for vacancy in vacancies %}
+    <li>
+        <strong>Название:</strong> {{ vacancy.name }}<br>
+        <strong>Компания:</strong> {{ vacancy.employer }}<br>
+        <strong>Зарплата:</strong> {{ vacancy.salary }}<br>
+        <strong>Регион:</strong> {{ vacancy.area }}<br>
+        <strong>Дата публикации:</strong> {{ vacancy.published_at }}<br>
+    </li>
+    <hr>
+    {% endfor %}
+</ul>
+{% else %}
+<p>Нет данных о вакансиях.</p>
+{% endif %}
+{% endblock content %}
