@@ -3,10 +3,20 @@ import csv
 import os
 from django.conf import settings
 
-CSV_FILE_PATH = os.path.join(settings.STATIC_DIR, 'vacancies_2024.csv')  # Файл должен быть в корне проекта
+CSV_FILE_PATH = os.path.join(settings.BASE_DIR, 'vacancies_2024.csv')  # Файл должен быть в корне проекта
 
 def load_csv_data(apps, schema_editor):
-    JobListing = apps.get_model('your_app_name', 'JobListing')  # Подставьте название вашего приложения
+    JobListing = apps.get_model('jobinfo', 'JobListing')  # Подставьте название вашего приложения
+    
+    with open(CSV_FILE_PATH, 'rb') as file:
+        raw_data = file.read()
+        if raw_data.startswith(b'\xef\xbb\xbf'):
+            raw_data = raw_data[3:]  # Удаляем BOM
+        decoded_data = raw_data.decode('utf-8')
+
+    with open(CSV_FILE_PATH, 'w', encoding='utf-8') as file:
+        file.write(decoded_data)
+
     with open(CSV_FILE_PATH, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         records = (

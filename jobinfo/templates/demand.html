@@ -1,0 +1,81 @@
+{% extends parent_template|default:"base.html" %}
+
+{% block content %}
+<table class="table table-bordered skills-table">
+    <thead>
+    <tr>
+        <th>Год</th>
+        <th>Минимальная оплата</th>
+        <th>Максимальная оплата</th>
+        <th>Количество вакансий</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for year, stats in salary_stats.items %}
+    <tr>
+        <td>{{ year }}</td>
+        <td>{{ stats.min_salary|default:"N/A" }}</td>
+        <td>{{ stats.max_salary|default:"N/A" }}</td>
+        <td>{{ stats.job_counts|default:0 }}</td>  {# Исправленный вывод количества вакансий #}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+<canvas id="salaryChart" width="400" height="200"></canvas>
+<script>
+    // Получаем данные из контекста Django
+    const years = {{ years|safe }};
+    const jobCounts = {{ job_counts|safe|default:"0" }};
+
+    // Данные для графика
+    const data = {
+      labels: years, // Годы
+      datasets: [
+        {
+          label: 'Кол-во вакансий',
+          data: jobCounts, // Количество вакансий
+          borderColor: 'red',
+          backgroundColor: 'rgba(255, 0, 0, 0.2)',
+          fill: true,
+        },
+      ]
+    };
+
+    // Конфигурация графика
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(tooltipItem) {
+                return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return value.toLocaleString();
+              }
+            }
+          }
+        }
+      }
+    };
+
+    // Создание графика
+    const ctx = document.getElementById('salaryChart').getContext('2d');
+    const salaryChart = new Chart(ctx, config);
+</script>
+{% endblock content %}

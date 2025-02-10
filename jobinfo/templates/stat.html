@@ -2,4 +2,164 @@
 
 {% block content %}
 
+<div class="container-fluid">
+    <div class="row">
+        <!-- Левая колонка (8 частей) -->
+        <div class="col-md-6 col-left">
+            <h3>Доля вакансий по городам</h3>
+            <canvas id="salaryChart" width="400" height="200"></canvas>
+        </div>
+
+        <div class="col-md-6 col-left">
+            <h3>Доля вакансий по годам</h3>
+            <canvas id="salaryYearChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <!-- Левая колонка (8 частей) -->
+        <div class="col-md-12">
+            <h3>Ключевые навыки</h3>
+
+            <table class="table table-bordered skills-table">
+                <thead>
+                <tr>
+                    {% for year in skills_by_year.keys %}
+                    <th>{{ year }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in max_skills_range %}
+                <tr>
+                    {% for year, skills in skills_by_year.items %}
+                    <td>
+                        {% if i < skills|length %}
+                        {{ skills|slice:i|last }}
+                        {% else %}
+                        &nbsp;
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // Получаем данные из контекста Django
+    const areas = {{ areas|safe }};
+    const jobCounts = {{ job_counts|safe|default:"0" }};
+
+    // Данные для графика
+    const data = {
+      labels: areas, // Зоны
+      datasets: [
+        {
+          label: 'Кол-во вакансий',
+          data: jobCounts, // Количество вакансий
+          borderColor: 'gray',
+          backgroundColor: backgroundColor = [
+  'rgb(255, 99, 132)',   // Красный
+  'rgb(54, 162, 235)',   // Синий
+  'rgb(255, 205, 86)',   // Желтый
+  'rgb(75, 192, 192)',   // Бирюзовый
+  'rgb(153, 102, 255)',  // Фиолетовый
+  'rgb(255, 159, 64)',   // Оранжевый
+  'rgb(0, 204, 102)',    // Зеленый
+  'rgb(204, 0, 204)',    // Пурпурный
+  'rgb(255, 140, 0)',    // Темно-оранжевый
+  'rgb(102, 51, 153)'    // Темно-фиолетовый
+],
+          fill: true,
+          hoverOffset: 10
+        },
+      ]
+    };
+
+    // Конфигурация графика
+    const config = {
+      type: 'doughnut',
+      data: data,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(tooltipItem) {
+                return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    // Создание графика
+    const ctx = document.getElementById('salaryChart').getContext('2d');
+    const salaryChart = new Chart(ctx, config);
+
+/////////////////////////////
+
+    // Получаем данные из контекста Django
+    const years = {{ years|safe }};
+    const jobCountsYears = {{ job_counts_years|safe|default:"0" }};
+
+    // Данные для графика
+    const data2 = {
+      labels: years, // Годы
+      datasets: [
+        {
+          label: 'Кол-во вакансий',
+          data: jobCountsYears, // Количество вакансий
+          borderColor: 'red',
+          backgroundColor: 'rgba(255, 0, 0, 0.2)',
+          fill: true,
+        },
+      ]
+    };
+
+    // Конфигурация графика
+    const config2 = {
+      type: 'line',
+      data: data2,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(tooltipItem) {
+                return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return value.toLocaleString();
+              }
+            }
+          }
+        }
+      }
+    };
+
+    // Создание графика
+    const ctx2 = document.getElementById('salaryYearChart').getContext('2d');
+    const salaryChart2 = new Chart(ctx2, config2);
+</script>
 {% endblock content %}

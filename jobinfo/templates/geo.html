@@ -1,0 +1,87 @@
+{% extends parent_template|default:"base.html" %}
+
+{% block content %}
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <th>Город</th>
+        <th>Минимальная оплата</th>
+        <th>Максимальная оплата</th>
+        <th>Количество вакансий</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for year, stats in salary_stats.items %}
+    <tr>
+        <td>{{ year }}</td>
+        <td>{{ stats.min_salary|default:"N/A" }}</td>
+        <td>{{ stats.max_salary|default:"N/A" }}</td>
+        <td>{{ stats.job_counts|default:0 }}</td>  {# Исправленный вывод количества вакансий #}
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<br>
+
+<canvas id="salaryChart" width="400" height="200"></canvas>
+
+<br>
+
+<script>
+    // Получаем данные из контекста Django
+    const areas = {{ areas|safe }};
+    const jobCounts = {{ job_counts|safe|default:"0" }};
+
+    // Данные для графика
+    const data = {
+      labels: areas, // Зоны
+      datasets: [
+        {
+          label: 'Кол-во вакансий',
+          data: jobCounts, // Количество вакансий
+          borderColor: 'gray',
+          backgroundColor: backgroundColor = [
+  'rgb(255, 99, 132)',   // Красный
+  'rgb(54, 162, 235)',   // Синий
+  'rgb(255, 205, 86)',   // Желтый
+  'rgb(75, 192, 192)',   // Бирюзовый
+  'rgb(153, 102, 255)',  // Фиолетовый
+  'rgb(255, 159, 64)',   // Оранжевый
+  'rgb(0, 204, 102)',    // Зеленый
+  'rgb(204, 0, 204)',    // Пурпурный
+  'rgb(255, 140, 0)',    // Темно-оранжевый
+  'rgb(102, 51, 153)'    // Темно-фиолетовый
+],
+          fill: true,
+          hoverOffset: 10
+        },
+      ]
+    };
+
+    // Конфигурация графика
+    const config = {
+      type: 'doughnut',
+      data: data,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(tooltipItem) {
+                return tooltipItem.dataset.label + ': ' + tooltipItem.raw;
+              }
+            }
+          }
+        }
+      }
+    };
+
+    // Создание графика
+    const ctx = document.getElementById('salaryChart').getContext('2d');
+    const salaryChart = new Chart(ctx, config);
+</script>
+{% endblock content %}
