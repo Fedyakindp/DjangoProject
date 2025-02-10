@@ -5,11 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Администратор баз данных — ключевая роль в мире IT</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    {% load static %}
     <style>
         body {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            background: url("{% static 'bg.jpg' %}");
+            background-attachment: fixed;
+            background-size: cover;
+            font-family: "Raleway", serif;
         }
         .content {
             flex: 1;
@@ -19,17 +27,32 @@
             text-align: center;
             padding: 10px 0;
         }
+
+        .site-menu li {
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .site-menu li a {
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+        }
+
+        .site-menu li a:hover {
+            background-color: var(--bs-blue);
+            color: var(--bs-white);
+        }
     </style>
 </head>
 <body>
 
 <!-- Шапка -->
-<nav class="navbar navbar-light bg-light">
+<nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
         <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
             ☰
         </button>
-        <span class="navbar-brand mb-0 h1">Моя страница</span>
+        <span class="navbar-brand mb-0 h1">Администратор баз данных — ключевая роль в мире IT</span>
     </div>
 </nav>
 
@@ -40,7 +63,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body">
-        <ul class="list-unstyled">
+        <ul class="list-unstyled site-menu">
             <!--li><a href="#" class="text-decoration-none">Главная</a></li>
             <li><a href="#" class="text-decoration-none">О нас</a></li>
             <li><a href="#" class="text-decoration-none">Контакты</a></li-->
@@ -69,7 +92,7 @@
 <!-- Футер -->
 <footer class="footer mt-auto">
     <div class="container">
-        <span>© 2025 Все права защищены</span>
+        <span>Федякин Дмитрий РИ-230936</span>
     </div>
 </footer>
 
